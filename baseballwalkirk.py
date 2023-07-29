@@ -4,6 +4,10 @@ import pandas as pd
 import pprint
 import numpy as np
 import tkinter as tk
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtCore import Qt
+
 
 def separate_name(player_name):
     # Split the full name into first name and last name
@@ -94,17 +98,85 @@ def lookup_pitching_stats(player_name):
         stats_dict[column_name] = value
     return stats_dict
 
+def display_matrix(matrix, player_name):
+    num_rows, num_cols = len(matrix), len(matrix[0])
+    cell_width = 40
 
-def display_matrix(matrix):
+    # Define row and column labels
+    row_labels = ['0-0', '0-1', '1-0', '0-2', '1-1', '2-0', '1-2', '2-1', '3-0', '2-2', '3-1', '3-2']
+    col_labels = row_labels + ['1B', '2B', '3B', 'HR', 'BIP', 'BB', 'K']
+
+    # Create the Qt application
+    app = QApplication(sys.argv)
+
+    # Create the main window
+    window = QMainWindow()
+    window.setWindowTitle("Matrix Display for " + player_name)
+
+    # Create a central widget to hold the layout
+    central_widget = QWidget()
+    window.setCentralWidget(central_widget)
+
+    # Create a vertical layout for the central widget
+    layout = QVBoxLayout()
+    central_widget.setLayout(layout)
+
+    # Create the table to display the matrix
+    for i in range(num_rows + 1):
+        row_layout = QHBoxLayout()
+        for j in range(num_cols + 1):
+            if i == 0 and j == 0:
+                # Top-left cell: empty label
+                label = QLabel()
+            elif i == 0:
+                # Column labels
+                label = QLabel(col_labels[j - 1])
+            elif j == 0:
+                # Row labels
+                label = QLabel(row_labels[i - 1])
+            else:
+                # Matrix values
+                val = matrix[i - 1][j - 1]
+                g = int(val * 400)  # Adjust the range of green component for a more drastic change
+                color = QColor(0, g, 0)  # Adjusted green color
+                text_color = QColor(255, 255, 255) if val != 0 else QColor(0, 0, 0)  # White text for non-zero values, black for zeros
+                label = QLabel(f"{val:.3f}")
+
+                # Set the background and text color
+                label.setAutoFillBackground(True)
+                label.setStyleSheet(f"background-color: {color.name()}; color: {text_color.name()};")
+
+            label.setAlignment(Qt.AlignCenter)  # Center the label text
+            label.setFixedSize(cell_width, cell_width)
+            row_layout.addWidget(label)
+
+        layout.addLayout(row_layout)
+
+    # Show the window
+    window.show()
+
+    # Start the Qt event loop
+    sys.exit(app.exec_())
+
+
+def dsplay_matrix(matrix, player_name):
     num_rows, num_cols = matrix.shape
     cell_width = 6
 
     # Create a Tkinter window
     window = tk.Tk()
-    window.title("Matrix Display")
+    window.title("Matrix Display for " + player_name)
+
+    # Create a frame to hold the table and the button
+    main_frame = tk.Frame(window)
+    main_frame.pack()
+
+    # Create a "Destroy" button and position it in the top-right corner
+    destroy_button = tk.Button(main_frame, text="X", command=window.destroy, width=0)
+    destroy_button.pack(side=tk.RIGHT, anchor=tk.N)
 
     # Create a table to display the matrix
-    table = tk.Frame(window)
+    table = tk.Frame(main_frame)
     table.pack()
 
     # Create row and column labels
@@ -125,19 +197,21 @@ def display_matrix(matrix):
         # Add matrix values
         for j, val in enumerate(row):
             if val != 0:
-                # Calculate the color based on the value (example gradient)
-                g = int(val * 400) # Adjust the range of green component for lighter shade
+                # Calculate the color based on the value
+                g = int(val * 400) # Adjust the range of green component for a more drastic change
                 color = f'#00{g:02x}00'  # RGB color format with adjusted green component
                 text_color = '#FFFFFF' 
 
                 # Create a label with the corresponding color
-                label = tk.Label(table, text=f"{val:.3f}", width=cell_width, relief=tk.RIDGE, bg=color, fg =text_color)
+                label = tk.Label(table, text=f"{val:.3f}", width=cell_width, relief=tk.RIDGE, bg=color, fg=text_color)
             else:
                 # Empty label if the value is 0
                 label = tk.Label(table, text="", width=cell_width, relief=tk.RIDGE)
             label.grid(row=i + 1, column=j + 1)  # Place matrix values in the corresponding row and column
+
     # Start the Tkinter event loop
     window.mainloop()
+
 
 
 def construct_transition_matrix(player_name):
@@ -204,19 +278,59 @@ def construct_transition_matrix(player_name):
                     matrix[3][14] = triple/ row_count
                     matrix[3][15] = homer/ row_count
                     matrix[3][16] = BIP / row_count
-      
-
-
+            elif i == 1:
+                if j == 0:
+                    matrix[2][4] = (strike + foul) / row_count
+                    matrix[2][5] = ball / row_count
+                    matrix[2][12] = single / row_count
+                    matrix[2][13] = double/ row_count
+                    matrix[2][14] = triple/ row_count
+                    matrix[2][15] = homer/ row_count
+                    matrix[2][16] = BIP / row_count
+                elif j == 1:
+                    matrix[4][6] = (strike + foul) / row_count
+                    matrix[4][7] = ball / row_count
+                    matrix[4][12] = single / row_count
+                    matrix[4][13] = double/ row_count
+                    matrix[4][14] = triple/ row_count
+                    matrix[4][15] = homer/ row_count
+                    matrix[4][16] = BIP / row_count
+                elif j == 2:
+                    matrix[6][18] = strike / row_count
+                    matrix[6][6] = foul / row_count
+                    matrix[6][9] = ball / row_count
+                    matrix[6][12] = single / row_count
+                    matrix[6][13] = double/ row_count
+                    matrix[6][14] = triple/ row_count
+                    matrix[6][15] = homer/ row_count
+                    matrix[6][16] = BIP / row_count
+            elif i == 2:
+                if j == 0:
+                    matrix[5][7] = (strike + foul) / row_count
+                    matrix[5][8] = ball / row_count
+                    matrix[5][12] = single / row_count
+                    matrix[5][13] = double/ row_count
+                    matrix[5][14] = triple/ row_count
+                    matrix[5][15] = homer/ row_count
+                    matrix[5][16] = BIP / row_count
+                elif j == 1:
+                    matrix[7][9] = (strike + foul) / row_count
+                    matrix[7][10] = ball / row_count
+                    matrix[7][12] = single / row_count
+                    matrix[7][13] = double/ row_count
+                    matrix[7][14] = triple/ row_count
+                    matrix[7][15] = homer/ row_count
+                    matrix[7][16] = BIP / row_count
 
            
 
-    display_matrix(matrix)
+    display_matrix(matrix, player_name)
 
 
 
 if __name__ == "__main__":
     #player_name = 'joey wiemer'
-    player_name = 'luis arraez'
+    player_name = 'shohei ohtani'
     #player_name = 'giancarlo stanton'
 
     """# Lookup batting stats for the specified player
