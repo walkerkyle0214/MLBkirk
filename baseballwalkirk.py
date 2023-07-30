@@ -9,6 +9,10 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtCore import Qt
 
 
+###### CONSTANTS #####
+MATRIX_ROWS = 12
+MATRIX_COLS = 19
+
 def separate_name(player_name):
     # Split the full name into first name and last name
     names = player_name.split()
@@ -169,7 +173,7 @@ def construct_transition_matrix(player_name):
     parsed_data = player_stats[selected_columns]
     #print(parsed_data)
 
-    matrix = np.ones((12, 19))
+    matrix = np.ones((MATRIX_ROWS, MATRIX_COLS))
 
     for i in range(4):
         for j in range(3):
