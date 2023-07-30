@@ -113,6 +113,9 @@ def display_matrix(matrix, player_name):
     window = QMainWindow()
     window.setWindowTitle("Matrix Display for " + player_name)
 
+    dark_gray = QColor(40, 40, 40)
+    window.setStyleSheet(f"background-color: {dark_gray.name()};")
+
     # Create a central widget to hold the layout
     central_widget = QWidget()
     window.setCentralWidget(central_widget)
@@ -139,7 +142,7 @@ def display_matrix(matrix, player_name):
                 val = matrix[i - 1][j - 1]
                 g = int(val * 400)  # Adjust the range of green component for a more drastic change
                 color = QColor(0, g, 0)  # Adjusted green color
-                text_color = QColor(255, 255, 255) if val != 0 else QColor(0, 0, 0)  # White text for non-zero values, black for zeros
+                text_color = QColor(255, 255, 255) if val != 1 else QColor(0, 0, 0)  # White text for non-zero values, black for zeros
                 label = QLabel(f"{val:.3f}")
 
                 # Set the background and text color
@@ -159,61 +162,6 @@ def display_matrix(matrix, player_name):
     sys.exit(app.exec_())
 
 
-def dsplay_matrix(matrix, player_name):
-    num_rows, num_cols = matrix.shape
-    cell_width = 6
-
-    # Create a Tkinter window
-    window = tk.Tk()
-    window.title("Matrix Display for " + player_name)
-
-    # Create a frame to hold the table and the button
-    main_frame = tk.Frame(window)
-    main_frame.pack()
-
-    # Create a "Destroy" button and position it in the top-right corner
-    destroy_button = tk.Button(main_frame, text="X", command=window.destroy, width=0)
-    destroy_button.pack(side=tk.RIGHT, anchor=tk.N)
-
-    # Create a table to display the matrix
-    table = tk.Frame(main_frame)
-    table.pack()
-
-    # Create row and column labels
-    row_labels = ['0-0','0-1','1-0','0-2','1-1','2-0','1-2','2-1','3-0','2-2','3-1','3-2']
-    col_labels = row_labels + ['1B','2B','3B','HR','BIP','BB','K']
-
-    # Add column labels
-    for i, label in enumerate(col_labels):
-        col_label = tk.Label(table, text=label, width=cell_width, relief=tk.RIDGE)
-        col_label.grid(row=0, column=i + 1)  # Place labels in the first row, starting from column 1
-
-    # Populate the table with matrix values and labels
-    for i, row in enumerate(matrix):
-        # Add row labels
-        row_label = tk.Label(table, text=row_labels[i], width=cell_width, relief=tk.RIDGE)
-        row_label.grid(row=i + 1, column=0)  # Place labels in the corresponding row, in the first column
-
-        # Add matrix values
-        for j, val in enumerate(row):
-            if val != 0:
-                # Calculate the color based on the value
-                g = int(val * 400) # Adjust the range of green component for a more drastic change
-                color = f'#00{g:02x}00'  # RGB color format with adjusted green component
-                text_color = '#FFFFFF' 
-
-                # Create a label with the corresponding color
-                label = tk.Label(table, text=f"{val:.3f}", width=cell_width, relief=tk.RIDGE, bg=color, fg=text_color)
-            else:
-                # Empty label if the value is 0
-                label = tk.Label(table, text="", width=cell_width, relief=tk.RIDGE)
-            label.grid(row=i + 1, column=j + 1)  # Place matrix values in the corresponding row and column
-
-    # Start the Tkinter event loop
-    window.mainloop()
-
-
-
 def construct_transition_matrix(player_name):
 
     player_stats = lookup_player_statcast(player_name)
@@ -221,7 +169,7 @@ def construct_transition_matrix(player_name):
     parsed_data = player_stats[selected_columns]
     #print(parsed_data)
 
-    matrix = np.zeros((12, 19))
+    matrix = np.ones((12, 19))
 
     for i in range(4):
         for j in range(3):
@@ -321,6 +269,16 @@ def construct_transition_matrix(player_name):
                     matrix[7][14] = triple/ row_count
                     matrix[7][15] = homer/ row_count
                     matrix[7][16] = BIP / row_count
+                elif j == 2:
+                    matrix[9][18] = strike / row_count
+                    matrix[9][9] = foul / row_count
+                    matrix[9][11] = ball / row_count
+                    matrix[9][12] = single / row_count
+                    matrix[9][13] = double/ row_count
+                    matrix[9][14] = triple/ row_count
+                    matrix[9][15] = homer/ row_count
+                    matrix[9][16] = BIP / row_count
+
 
            
 
