@@ -3,7 +3,6 @@ import pybaseball
 import pandas as pd
 import pprint
 import numpy as np
-import tkinter as tk
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtCore import Qt
@@ -282,39 +281,34 @@ def construct_transition_matrix(player_name):
                     matrix[9][14] = triple/ row_count
                     matrix[9][15] = homer/ row_count
                     matrix[9][16] = BIP / row_count
+            elif i == 3:
+                if j == 0:
+                    matrix[8][10] = (strike + foul) / row_count
+                    matrix[8][17] = ball / row_count
+                    matrix[8][12] = single / row_count
+                    matrix[8][13] = double/ row_count
+                    matrix[8][14] = triple/ row_count
+                    matrix[8][15] = homer/ row_count
+                    matrix[8][16] = BIP / row_count
+                elif j == 1:
+                    matrix[10][11] = (strike + foul) / row_count
+                    matrix[10][17] = ball / row_count
+                    matrix[10][12] = single / row_count
+                    matrix[10][13] = double/ row_count
+                    matrix[10][14] = triple/ row_count
+                    matrix[10][15] = homer/ row_count
+                    matrix[10][16] = BIP / row_count
+                elif j == 2:
+                    matrix[11][18] = strike / row_count
+                    matrix[11][11] = foul / row_count
+                    matrix[11][17] = ball / row_count
+                    matrix[11][12] = single / row_count
+                    matrix[11][13] = double/ row_count
+                    matrix[11][14] = triple/ row_count
+                    matrix[11][15] = homer/ row_count
+                    matrix[11][16] = BIP / row_count
+                    
+    return matrix
 
 
 
-
-        
-
-
-           
-
-    display_matrix(matrix, player_name)
-
-
-
-if __name__ == "__main__":
-    #player_name = 'joey wiemer'
-    player_name = 'shohei ohtani'
-    #player_name = 'giancarlo stanton'
-
-    """# Lookup batting stats for the specified player
-    batting_stats = lookup_batting_stats(player_name)
-    if batting_stats:
-        pprint.pprint(batting_stats)
-
-    # Lookup pitching stats for the specified player
-    pitching_stats = lookup_pitching_stats(player_name)
-    if pitching_stats:
-        pprint.pprint(pitching_stats)
-
-    player_stats = lookup_player_statcast(player_name)
-    print(player_stats)"""
-
-    pd.set_option('display.max_rows', None)
-
-    construct_transition_matrix(player_name)
-
-    sys.exit(0)
