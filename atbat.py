@@ -11,6 +11,7 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtCore import Qt
 
 
+#returns a list of values corresponding to events during a predicted at-bat
 def at_bat(hitter_matrix, pitcher_matrix):
 
     current_state = 0
